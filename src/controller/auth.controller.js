@@ -13,9 +13,9 @@ export const sign_in = async (req, res, next) => {
     const findUser = await User.findOne({ email });
     const isMatchPAssword = await bcrypt.compare(password, findUser.password);
     if (!isMatchPAssword) throw new CustomError(400, "Email or password wrong");
+    let token = genereteJwt({ id: findUser.id });
     const resData = new ResData(200, "succses", findUser);
-    genereteJwt({ id: findUser.id }, res);
-    res.status(resData.status).json(resData);
+    res.status(resData.status).json({ ...resData, token });
   } catch (error) {
     next(error);
   }
@@ -34,15 +34,14 @@ export const create_manager = async (req, res, next) => {
   }
 };
 export const create_admin = async (req, res, next) => {
-    try {
-      const user = req.body;
-      const findUser = await User.findOne({ email: user.email });
-      if (findUser) throw new CustomError(403, "Email already exists");
-      let password = await hashPassword(user.password);
-      await User.create({ ...user, password });
-      res.status(201).json({ message: "succses" });
-    } catch (error) {
-      next(error);
-    }
-  };
-  
+  try {
+    const user = req.body;
+    const findUser = await User.findOne({ email: user.email });
+    if (findUser) throw new CustomError(403, "Email already exists");
+    let password = await hashPassword(user.password);
+    await User.create({ ...user, password });
+    res.status(201).json({ message: "succses" });
+  } catch (error) {
+    next(error);
+  }
+};
