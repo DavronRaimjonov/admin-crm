@@ -16,14 +16,12 @@ export const hashPassword = async (password) => {
 };
 export const sendTokenAsCookie = (res, token) => {
   const maxAge = 1 * 60 * 60 * 1000;
+  const isProd = process.env.NODE_ENV === "production";
 
-  res.cookie("Authorization", token, {
-    httpOnly: true,
-    secure: process.env.NODE.ENV === "production",
-    sameSite: process.env.NODE.ENV === "production" ? "none" : "lax",
+  res.cookie("token", token, {
     maxAge,
-    path: "/",
-    domain:
-      process.env.NODE.ENV === "production" ? "your.domain.uz" : "localhost",
+    httpOnly: true,
+    secure: isProd, // Production (HTTPS) bo‘lsa true
+    sameSite: isProd ? "None" : "Lax", // Productionda "None", localda "Lax"
   });
 };
