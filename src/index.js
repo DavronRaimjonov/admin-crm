@@ -12,7 +12,7 @@ let PORT = process.env.PORT || 7070;
 
 app.use(
   cors({
-    origin: " http://localhost:3000",
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
