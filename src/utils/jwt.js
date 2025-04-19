@@ -15,10 +15,10 @@ export const sendTokenAsCookie = (res, token) => {
   const maxAge = 2 * 60 * 60 * 1000;
 
   res.cookie("token", token, {
+    maxAge,
     httpOnly: true,
     secure: process.env.NODE_ENV === "production" ? true : false,
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    maxAge,
+    sameSite: "None",
   });
 };
 ``;
