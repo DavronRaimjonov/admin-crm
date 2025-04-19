@@ -18,9 +18,12 @@ export const sendTokenAsCookie = (res, token) => {
   const maxAge = 1 * 60 * 60 * 1000;
 
   res.cookie("Authorization", token, {
-    maxAge,
     httpOnly: true,
-    secure: true, // Production (HTTPS) bo‘lsa true
-    sameSite: "None", // Productionda "None", localda "Lax"
+    secure: process.env.NODE.ENV === "production",
+    sameSite: process.env.NODE.ENV === "production" ? "none" : "lax",
+    maxAge,
+    path: "/",
+    domain:
+      process.env.NODE.ENV === "production" ? "your.domain.uz" : "localhost",
   });
 };
