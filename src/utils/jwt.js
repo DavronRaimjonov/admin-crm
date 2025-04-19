@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 export const genereteJwt = (params) => {
   const token = jwt.sign(params, process.env.JWT_SECRET_KEY, {
-    expiresIn: "2h",
+    expiresIn: "1h",
   });
   return token;
 };
@@ -12,13 +12,11 @@ export const hashPassword = async (password) => {
   return hashedPassword;
 };
 export const sendTokenAsCookie = (res, token) => {
-  const maxAge = 2 * 60 * 60 * 1000;
+  const maxAge = 1 * 60 * 60 * 1000;
 
   res.cookie("token", token, {
-    maxAge,
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production" ? true : false,
-    sameSite: "None",
+    expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
+    path: "/",
   });
 };
-``;
