@@ -12,7 +12,7 @@ export const genereteJwt = (params, res) => {
     httpOnly: true,
     // secure: process.env.NODE_ENV === "production" ? true : false,
     secure: false,
-    sameSite: "None",
+    sameSite: "strict",
   });
   return token;
 };
