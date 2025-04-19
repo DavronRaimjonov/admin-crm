@@ -18,5 +18,7 @@ export const sendTokenAsCookie = (res, token) => {
     httpOnly: true,
     expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
     path: "/",
+    sameSite: "lax",
+    secure: true,
   });
 };
