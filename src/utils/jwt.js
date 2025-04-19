@@ -1,4 +1,7 @@
+import dotenv from "dotenv";
+dotenv.config();
 import jwt from "jsonwebtoken";
+
 import bcrypt from "bcrypt";
 export const genereteJwt = (params) => {
   const token = jwt.sign(params, process.env.JWT_SECRET_KEY, {
@@ -14,10 +17,11 @@ export const hashPassword = async (password) => {
 export const sendTokenAsCookie = (res, token) => {
   const maxAge = 1 * 60 * 60 * 1000;
   const isInDevelopment = process.env.NODE_ENV === "development";
-  res.cookie("token", token, {
+  res.cookie("Aurhorization", token, {
     httpOnly: true,
     sameSite: isInDevelopment ? false : "none",
-    secure: isInDevelopment ? false : true,
+    secure: true,
     maxAge,
   });
+  console.log(process.env.NODE_ENV);
 };
