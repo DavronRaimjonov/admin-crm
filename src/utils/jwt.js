@@ -16,12 +16,11 @@ export const hashPassword = async (password) => {
 };
 export const sendTokenAsCookie = (res, token) => {
   const maxAge = 1 * 60 * 60 * 1000;
-  const isInDevelopment = process.env.NODE_ENV === "development";
-  res.cookie("Aurhorization", token, {
-    httpOnly: true,
-    sameSite: isInDevelopment ? false : "none",
-    secure: true,
+  res.cookie("Au", token, {
     maxAge,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production" ? true : false,
+    sameSite: "None",
   });
   console.log(process.env.NODE_ENV);
 };
