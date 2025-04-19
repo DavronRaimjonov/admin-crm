@@ -13,12 +13,11 @@ export const hashPassword = async (password) => {
 };
 export const sendTokenAsCookie = (res, token) => {
   const maxAge = 1 * 60 * 60 * 1000;
-
+  const isInDevelopment = process.env.NODE_ENV === "development";
   res.cookie("token", token, {
     httpOnly: true,
-    expires: new Date(Date.now() + 1 * 60 * 60 * 1000),
-    path: "/",
-    sameSite: "lax",
-    secure: true,
+    sameSite: isInDevelopment ? false : "none",
+    secure: isInDevelopment ? false : true,
+    maxAge,
   });
 };
