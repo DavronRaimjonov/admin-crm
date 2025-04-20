@@ -10,9 +10,8 @@ export const genereteJwt = (params, res) => {
   res.cookie("jwt", token, {
     maxAge: 1 * 60 * 60 * 1000, // 1h
     httpOnly: true,
-    secure: false,
+    secure: true,
     sameSite: "strict",
-    domain: "localhost",
   });
   return token;
 };
