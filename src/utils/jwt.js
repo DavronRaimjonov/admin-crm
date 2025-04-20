@@ -8,10 +8,11 @@ export const genereteJwt = (params, res) => {
     expiresIn: "1h",
   });
   res.cookie("jwt", token, {
-    maxAge: 3600000,
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    secure: true,
+    sameSite: "none",
+    path: "/",
+    maxAge: 3600000,
   });
   return token;
 };
