@@ -7,13 +7,13 @@ export const genereteJwt = (params, res) => {
   const token = jwt.sign(params, process.env.JWT_SECRET_KEY, {
     expiresIn: "1h",
   });
-  res.cookie("jwt", token, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    path: "/",
-    maxAge: 3600000,
-  });
+  // res.cookie("jwt", token, {
+  //   httpOnly: true,
+  //   secure: true,
+  //   sameSite: "none",
+  //   path: "/",
+  //   maxAge: 3600000,
+  // });
   return token;
 };
 export const hashPassword = async (password) => {

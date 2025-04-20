@@ -13,8 +13,11 @@ export const sign_in = async (req, res, next) => {
     const findUser = await User.findOne({ email });
     const isMatchPAssword = await bcrypt.compare(password, findUser.password);
     if (!isMatchPAssword) throw new CustomError(400, "Email or password wrong");
-    genereteJwt({ id: findUser.id }, res);
-    const resData = new ResData(200, "succses", findUser);
+    let token = genereteJwt({ id: findUser.id }, res);
+    const resData = new ResData(200, "succses", {
+      ...findUser.toObject(),
+      token,
+    });
     res.status(resData.status).json({ ...resData });
   } catch (error) {
     next(error);
