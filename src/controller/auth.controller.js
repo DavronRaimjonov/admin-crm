@@ -10,7 +10,7 @@ export const sign_in = async (req, res, next) => {
     if (!email || !password)
       throw new CustomError(400, "Email or password must be");
 
-    const findUser = await User.findOne({ email });
+    const findUser = await User.findOne({ email }).select("-password");
     const isMatchPAssword = await bcrypt.compare(password, findUser.password);
     if (!isMatchPAssword) throw new CustomError(400, "Email or password wrong");
     let token = genereteJwt({ id: findUser.id }, res);
@@ -19,31 +19,6 @@ export const sign_in = async (req, res, next) => {
       token,
     });
     res.status(resData.status).json({ ...resData });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const create_manager = async (req, res, next) => {
-  try {
-    const user = req.body;
-    const findUser = await User.findOne({ email: user.email });
-    if (findUser) throw new CustomError(403, "Email already exists");
-    let password = await hashPassword(user.password);
-    await User.create({ ...user, password });
-    res.status(201).json({ message: "succses" });
-  } catch (error) {
-    next(error);
-  }
-};
-export const create_admin = async (req, res, next) => {
-  try {
-    const user = req.body;
-    const findUser = await User.findOne({ email: user.email });
-    if (findUser) throw new CustomError(403, "Email already exists");
-    let password = await hashPassword(user.password);
-    await User.create({ ...user, password });
-    res.status(201).json({ message: "succses" });
   } catch (error) {
     next(error);
   }
