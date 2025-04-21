@@ -5,6 +5,7 @@ import { verifyTokenMiddleware } from "../../middleware/verify.middleware.js";
 import {
   create_admin,
   create_manager,
+  getAllManagers,
 } from "../../controller/staff.controller.js";
 const router = Router();
 
@@ -22,4 +23,6 @@ router.post(
   verifyMenejerMiddleware,
   create_admin
 );
+router.get("/all-managers", verifyTokenMiddleware, getAllManagers);
+router.get("/all-admins", verifyTokenMiddleware, getAllManagers);
 export { router };
