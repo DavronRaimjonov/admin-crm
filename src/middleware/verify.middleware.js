@@ -4,10 +4,11 @@ import { CustomError } from "../utils/responseHelpers.js";
 
 export const verifyTokenMiddleware = (req, res, next) => {
   try {
-    const token = req.cookies.jwt;
-    if (!token) {
+    const auth = req.headers.authorization;
+    if (!auth) {
       throw new CustomError(401, "Unauhtorized - Not Token Porivded");
     }
+    const token = auth.split(" ")[1];
     jwt.verify(token, process.env.JWT_SECRET_KEY, async (err, encode) => {
       if (err instanceof jwt.JsonWebTokenError) {
         throw new CustomError(403, "Token invalid");
