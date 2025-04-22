@@ -26,9 +26,33 @@ export const create_admin = async (req, res, next) => {
   }
 };
 
+export const edited_admin = async (req, res, next) => {
+  try {
+    const user = req.body;
+    if (!user._id) {
+      throw new CustomError(400, "_id must be");
+    }
+
+    let updateAdmin = await User.findByIdAndUpdate(
+      { _id: user._id },
+      { $set: { ...user } },
+      {
+        new: true,
+      }
+    ).select("-password");
+    if (!updateAdmin) {
+      throw new CustomError(404, "Admin topilmadi");
+    }
+    const resData = new ResData(200, "Admin yangilandi", updateAdmin);
+    res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getAllManagers = async (req, res, next) => {
   try {
-    const managers = User.find({ role: "manager" });
+    const managers = await User.find({ role: "manager" }).select("-password");
     const resData = new ResData(200, "succses", managers);
     res.status(resData.status).json(resData);
   } catch (error) {
@@ -37,9 +61,41 @@ export const getAllManagers = async (req, res, next) => {
 };
 export const getAllAdmins = async (req, res, next) => {
   try {
-    const managers = User.find({ role: "admin" });
+    const managers = await User.find({ role: "admin" }).select("-password");
     const resData = new ResData(200, "succses", managers);
     res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getDeletedWorks = async (req, res, next) => {
+  try {
+    const managers = await User.find({ is_deleted: true }).select("-password");
+    const resData = new ResData(200, "succses", managers);
+    res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleted_admin = async (req, res, next) => {
+  try {
+    const user = req.body;
+
+    if (!user._id) {
+      throw new CustomError(400, "_id must be");
+    }
+
+    await User.findByIdAndUpdate(user._id, {
+      $set: {
+        is_deleted: true,
+        status: "ishdan bo'shatilgan",
+        active: false,
+        work_end: Date.now(),
+      },
+    });
+    res.status(200).json({ message: "Admin ishdan bo'shatilidi" });
   } catch (error) {
     next(error);
   }
