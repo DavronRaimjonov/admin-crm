@@ -18,7 +18,7 @@ export const createAuthValidator = Joi.object({
 
   active: Joi.boolean().optional(),
   status: Joi.string()
-    .valid("faol", "nofaol", "ta'tilda", "ishdan bo'shatilgan")
+    .valid("faol", "ta'tilda", "ishdan bo'shatilgan")
     .optional(),
 
   last_active_date: Joi.date().optional(),

@@ -17,7 +17,7 @@ const authSchema = new Schema(
     active: { type: Boolean, default: true },
     status: {
       type: String,
-      enum: ["faol", "nofaol", "ta'tilda", "ishdan bo'shatilgan"],
+      enum: ["faol", "ta'tilda", "ishdan bo'shatilgan"],
       default: "faol",
     },
     last_active_date: { type: Date, default: Date.now },
