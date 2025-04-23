@@ -1,5 +1,8 @@
 import { Router } from "express";
-import { createAuthMiddleware } from "../../middleware/validator.middleware.js";
+import {
+  createAuthMiddleware,
+  editedAuthMiddleware,
+} from "../../middleware/validator.middleware.js";
 import { verifyMenejerMiddleware } from "../../middleware/role.middleware.js";
 import { verifyTokenMiddleware } from "../../middleware/verify.middleware.js";
 import {
@@ -31,7 +34,7 @@ router.post(
   "/edited-admin",
   verifyTokenMiddleware,
   verifyMenejerMiddleware,
-  createAuthMiddleware,
+  editedAuthMiddleware,
   edited_admin
 );
 router.delete(
