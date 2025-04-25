@@ -21,6 +21,5 @@ export const editAuthValidator = Joi.object({
   first_name: Joi.string().required(),
   last_name: Joi.string().required(),
   email: Joi.string().email().required(),
-  image: Joi.string().allow(""),
-  active: Joi.boolean().optional(),
+  status: Joi.string().valid("faol", "ta'tilda").optional(),
 });
