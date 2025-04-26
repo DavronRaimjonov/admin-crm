@@ -12,6 +12,9 @@ export const sign_in = async (req, res, next) => {
       throw new CustomError(400, "Email or password must be");
 
     const findUser = await User.findOne({ email });
+    if (!findUser) {
+      throw new CustomError(400, "Email or password wrong");
+    }
     if (findUser.is_deleted) {
       throw new CustomError(400, "Sizga ruxsat yo'q");
     }

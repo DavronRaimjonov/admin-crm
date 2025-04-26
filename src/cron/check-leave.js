@@ -3,7 +3,7 @@ import User from "../schema/auth.schmea.js";
 import { send_leave_staff_sms } from "../config/nodemailer.js";
 
 export const check_leave_staff = () => {
-  cron.schedule("0 0 * * *", async () => {
+  cron.schedule("* * * * *", async () => {
     const now = new Date().toISOString().slice(0, 10);
     const usersOnLeave = await User.find({
       active: false,
