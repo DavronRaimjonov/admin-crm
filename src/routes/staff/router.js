@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createAuthMiddleware,
   editedAuthMiddleware,
+  leaveStaffMiddleware,
 } from "../../middleware/validator.middleware.js";
 import { verifyMenejerMiddleware } from "../../middleware/role.middleware.js";
 import { verifyTokenMiddleware } from "../../middleware/verify.middleware.js";
@@ -13,6 +14,7 @@ import {
   getAllAdmins,
   getAllManagers,
   getDeletedWorks,
+  leave_staff,
 } from "../../controller/staff.controller.js";
 const router = Router();
 
@@ -38,12 +40,17 @@ router.post(
   edited_admin
 );
 router.delete(
-  "/edited-admin",
+  "/deleted-admin",
   verifyTokenMiddleware,
   verifyMenejerMiddleware,
   deleted_admin
 );
-
+router.post(
+  "/leave-staff",
+  verifyTokenMiddleware,
+  leaveStaffMiddleware,
+  leave_staff
+);
 router.get("/all-managers", verifyTokenMiddleware, getAllManagers);
 router.get("/all-admins", verifyTokenMiddleware, getAllAdmins);
 router.get("/deleted-staff", verifyTokenMiddleware, getDeletedWorks);

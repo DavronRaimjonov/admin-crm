@@ -3,7 +3,6 @@ import { CustomError } from "../utils/responseHelpers.js";
 export const verifyMenejerMiddleware = (req, res, next) => {
   try {
     const role = req.user.role;
-    console.log(role);
     if (!role) {
       throw new CustomError(403, "Rusxat yo'q");
     }

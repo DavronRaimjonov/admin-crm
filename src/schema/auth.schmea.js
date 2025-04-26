@@ -20,8 +20,17 @@ const authSchema = new Schema(
       enum: ["faol", "ta'tilda", "ishdan bo'shatilgan"],
       default: "faol",
     },
-    last_active_date: { type: Date, default: Date.now },
     is_deleted: { type: Boolean, default: false },
+    leave_history: {
+      type: [
+        {
+          start_date: { type: Date, required: true },
+          end_date: { type: Date, required: true },
+          reason: { type: String, required: true },
+        },
+      ],
+      default: [],
+    },
   },
   {
     versionKey: false,

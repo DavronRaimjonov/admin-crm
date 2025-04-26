@@ -100,3 +100,26 @@ export const deleted_admin = async (req, res, next) => {
     next(error);
   }
 };
+
+export const leave_staff = async (req, res, next) => {
+  try {
+    const body = req.body;
+    await User.findByIdAndUpdate(body._id, {
+      $push: {
+        leave_history: {
+          start_date: body.start_date,
+          end_date: body.end_date,
+          reason: body.reason,
+        },
+      },
+      $set: {
+        active: false,
+        status: "ta'tilda",
+      },
+    });
+
+    res.status(200).json({ message: "Admin ta'tilga yuborildi" });
+  } catch (error) {
+    next(error);
+  }
+};
