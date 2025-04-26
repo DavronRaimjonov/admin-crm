@@ -8,7 +8,6 @@ import {
 
 export const validateMiddleware = (schema) => (req, res, next) => {
   const { error } = schema.validate(req.body, { abortEarly: false });
-  console.log("Validating:", req.body);
   if (error) {
     return next(
       new CustomError(400, error.details.map((err) => err.message).join(", "))

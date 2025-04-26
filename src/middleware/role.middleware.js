@@ -7,7 +7,7 @@ export const verifyMenejerMiddleware = (req, res, next) => {
       throw new CustomError(403, "Rusxat yo'q");
     }
     if (role !== "manager") {
-      throw new CustomError(403, "Faqat manager admin yaratishi mumkin");
+      throw new CustomError(403, "Faqat managerga ruxsat beriladi");
     }
 
     next();

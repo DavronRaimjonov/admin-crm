@@ -12,8 +12,8 @@ export const sign_in = async (req, res, next) => {
       throw new CustomError(400, "Email or password must be");
 
     const findUser = await User.findOne({ email });
-    if (!findUser.active) {
-      throw new CustomError(400, "Email or password must be");
+    if (findUser.is_deleted) {
+      throw new CustomError(400, "Sizga ruxsat yo'q");
     }
     const isMatchPAssword = await bcrypt.compare(password, findUser.password);
     if (!isMatchPAssword) throw new CustomError(400, "Email or password wrong");

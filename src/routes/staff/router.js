@@ -48,6 +48,7 @@ router.delete(
 router.post(
   "/leave-staff",
   verifyTokenMiddleware,
+  verifyMenejerMiddleware,
   leaveStaffMiddleware,
   leave_staff
 );
