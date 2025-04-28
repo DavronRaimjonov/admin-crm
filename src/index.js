@@ -5,8 +5,8 @@ import { CustomError, ResData } from "./utils/responseHelpers.js";
 import { connectDB } from "./config/db.config.js";
 import { router } from "./routes/router.js";
 import cookieParser from "cookie-parser";
-import User from "./schema/auth.schmea.js";
 import { run_cron } from "./cron/index.js";
+import { swaggerDocs } from "./utils/swagger.js";
 const app = express();
 dotenv.config();
 
@@ -39,23 +39,7 @@ app.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`);
   run_cron();
   connectDB();
+  swaggerDocs(app, PORT);
 });
-const d = async () => {
-  const now = new Date().toISOString().slice(0, 10);
-  const usersOnLeave = await User.find({
-    active: false,
-    status: "ta'tilda",
-  });
-  for (const user of usersOnLeave) {
-    const last_leave = user.leave_history[user.leave_history.length - 1];
-    const endDate = new Date(last_leave.end_date).toISOString().slice(0, 10);
-    if ("2025-04-28" === endDate) {
-      console.log("salom");
-      console.log(last_leave);
-    } else {
-      console.log("hali vaqt bor");
-      console.log(last_leave);
-    }
-  }
-};
+
 // d();

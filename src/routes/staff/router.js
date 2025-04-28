@@ -14,6 +14,7 @@ import {
   getAllAdmins,
   getAllManagers,
   getDeletedWorks,
+  leave_exit_staff,
   leave_staff,
 } from "../../controller/staff.controller.js";
 const router = Router();
@@ -51,6 +52,12 @@ router.post(
   verifyMenejerMiddleware,
   leaveStaffMiddleware,
   leave_staff
+);
+router.post(
+  "/leave-exit-staff",
+  verifyTokenMiddleware,
+  verifyMenejerMiddleware,
+  leave_exit_staff
 );
 router.get("/all-managers", verifyTokenMiddleware, getAllManagers);
 router.get("/all-admins", verifyTokenMiddleware, getAllAdmins);

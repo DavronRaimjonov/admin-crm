@@ -123,3 +123,41 @@ export const leave_staff = async (req, res, next) => {
     next(error);
   }
 };
+
+export const leave_exit_staff = async (req, res, next) => {
+  try {
+    const body = req.body;
+    if (!body || !body._id) {
+      throw new CustomError(400, "Id majburiy");
+    }
+
+    const user = await User.findById(body._id);
+    if (!user) {
+      throw new CustomError(404, "Foydalanuvchi topilmadi");
+    }
+
+    if (user.status !== "ta'tilda") {
+      throw new CustomError(
+        400,
+        "Foydalanuvchi ishdan bo'shatilgan yoki ta'tilda emas"
+      );
+    }
+
+    user.active = true;
+    user.status = "faol";
+
+    if (user.leave_history && user.leave_history.length > 0) {
+      const lastLeave = user.leave_history[user.leave_history.length - 1];
+      if (lastLeave) {
+        lastLeave.end_date = new Date();
+        user.markModified("leave_history"); // <<=== mana shart
+      }
+    }
+
+    await user.save();
+
+    res.json({ message: "Foydalanuvchi tatildan oldin chiqarildi", user });
+  } catch (error) {
+    next(error);
+  }
+};

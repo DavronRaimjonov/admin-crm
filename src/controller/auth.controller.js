@@ -60,10 +60,9 @@ export const edit_profile_img = async (req, res, next) => {
     const result = await cloudinary.uploader.upload(fileBase64, {
       folder: "uploads",
     });
-    await User.updateOne(
-      { _id: req.userId },
-      { $set: { image: result.secure_url } }
-    );
+    await User.findByIdAndUpdate(req.user._id, {
+      $set: { image: result.secure_url },
+    });
 
     const resData = new ResData(200, "success", { image: result.secure_url });
 

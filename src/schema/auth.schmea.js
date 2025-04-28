@@ -24,9 +24,9 @@ const authSchema = new Schema(
     leave_history: {
       type: [
         {
-          start_date: { type: Date, required: true },
-          end_date: { type: Date, required: true },
-          reason: { type: String, required: true },
+          start_date: { type: Date },
+          end_date: { type: Date },
+          reason: { type: String  },
         },
       ],
       default: [],
