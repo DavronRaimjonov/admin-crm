@@ -4,6 +4,8 @@ import { genereteJwt, hashPassword } from "../utils/jwt.js";
 import { CustomError, ResData } from "../utils/responseHelpers.js";
 import bcrypt from "bcrypt";
 
+
+
 export const sign_in = async (req, res, next) => {
   try {
     const { email, password } = req.body;

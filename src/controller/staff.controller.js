@@ -52,7 +52,16 @@ export const edited_admin = async (req, res, next) => {
 
 export const getAllManagers = async (req, res, next) => {
   try {
-    const managers = await User.find({ role: "manager" }).select("-password");
+    const { status } = req.query;
+    let fitler = { role: "manager" };
+    if (status) {
+      fitler.status = status;
+    }
+
+    let managers = await User.find(fitler).select("-password");
+    if (!managers.length) {
+      managers = await User.find({ role: "manager" }).select("-password");
+    }
     const resData = new ResData(200, "succses", managers);
     res.status(resData.status).json(resData);
   } catch (error) {
@@ -61,7 +70,15 @@ export const getAllManagers = async (req, res, next) => {
 };
 export const getAllAdmins = async (req, res, next) => {
   try {
-    const managers = await User.find({ role: "admin" }).select("-password");
+    const { status } = req.query;
+    let filter = { role: "admin" };
+    if (status) {
+      filter.status = status;
+    }
+    let admins = await User.find(filter).select("-password");
+    if (!admins.length) {
+      admins = await User.find({ role: "admin" }).select("-password");
+    }
     const resData = new ResData(200, "succses", managers);
     res.status(resData.status).json(resData);
   } catch (error) {
@@ -150,13 +167,13 @@ export const leave_exit_staff = async (req, res, next) => {
       const lastLeave = user.leave_history[user.leave_history.length - 1];
       if (lastLeave) {
         lastLeave.end_date = new Date();
-        user.markModified("leave_history"); // <<=== mana shart
+        user.markModified("leave_history");
       }
     }
 
     await user.save();
 
-    res.json({ message: "Foydalanuvchi tatildan oldin chiqarildi", user });
+    res.json({ message: "Foydalanuvchi tatildan oldin chiqarildi" });
   } catch (error) {
     next(error);
   }

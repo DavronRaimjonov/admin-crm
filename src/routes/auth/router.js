@@ -22,7 +22,7 @@ router.post(
   "/edit-profile-img",
   verifyTokenMiddleware,
   upload.single("image"),
-  edit_profile_img,
+  edit_profile_img
 );
 
 export { router };

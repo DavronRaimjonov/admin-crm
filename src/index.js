@@ -6,11 +6,12 @@ import { connectDB } from "./config/db.config.js";
 import { router } from "./routes/router.js";
 import cookieParser from "cookie-parser";
 import { run_cron } from "./cron/index.js";
-import { swaggerDocs } from "./utils/swagger.js";
+
 const app = express();
+
 dotenv.config();
 
-let PORT = process.env.PORT || 7070;
+const PORT = process.env.PORT || 7070;
 
 app.use(
   cors({
@@ -20,8 +21,8 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json());
-app.use("/api", router);
 
+app.use("/api", router);
 app.use((req, res, next) => {
   try {
     throw new CustomError(404, `This ${req.url} page not found`);
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
     next(error);
   }
 });
+
 app.use((error, req, res, next) => {
   const statusCode = error.status || 500;
   const resData = new ResData(statusCode, error.message);
@@ -36,10 +38,7 @@ app.use((error, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`http://localhost:${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
   run_cron();
   connectDB();
-  swaggerDocs(app, PORT);
 });
-
-// d();
