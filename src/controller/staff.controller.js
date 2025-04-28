@@ -53,16 +53,15 @@ export const edited_admin = async (req, res, next) => {
 export const getAllManagers = async (req, res, next) => {
   try {
     const { status } = req.query;
-    let fitler = { role: "manager" };
+    const filter = { role: "manager" }; 
+
     if (status) {
-      fitler.status = status;
+      filter.status = status;
     }
 
-    let managers = await User.find(fitler).select("-password");
-    if (!managers.length) {
-      managers = await User.find({ role: "manager" }).select("-password");
-    }
-    const resData = new ResData(200, "succses", managers);
+    const managers = await User.find(filter).select("-password");
+    const result = status && !managers.length ? [] : managers;
+    const resData = new ResData(200, "success", result); 
     res.status(resData.status).json(resData);
   } catch (error) {
     next(error);
@@ -70,16 +69,19 @@ export const getAllManagers = async (req, res, next) => {
 };
 export const getAllAdmins = async (req, res, next) => {
   try {
-    const { status } = req.query;
+    const { status, search } = req.query;
     let filter = { role: "admin" };
+
     if (status) {
       filter.status = status;
     }
-    let admins = await User.find(filter).select("-password");
-    if (!admins.length) {
-      admins = await User.find({ role: "admin" }).select("-password");
+    if (search) {
+      filter.first_name = { $regex: search, $options: "i" };
     }
-    const resData = new ResData(200, "succses", admins);
+
+    const admins = await User.find(filter).select("-password");
+    const result = search && !admins.length ? [] : admins;
+    const resData = new ResData(200, "success", result);
     res.status(resData.status).json(resData);
   } catch (error) {
     next(error);
