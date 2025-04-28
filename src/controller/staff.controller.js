@@ -79,7 +79,7 @@ export const getAllAdmins = async (req, res, next) => {
     if (!admins.length) {
       admins = await User.find({ role: "admin" }).select("-password");
     }
-    const resData = new ResData(200, "succses", managers);
+    const resData = new ResData(200, "succses", admins);
     res.status(resData.status).json(resData);
   } catch (error) {
     next(error);
