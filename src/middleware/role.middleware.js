@@ -15,6 +15,21 @@ export const verifyMenejerMiddleware = (req, res, next) => {
     next(error);
   }
 };
+export const verifySeoMiddleware = (req, res, next) => {
+  try {
+    const role = req.user.role;
+    if (!role) {
+      throw new CustomError(403, "Rusxat yo'q");
+    }
+    if (role !== "seo") {
+      throw new CustomError(403, "Faqat raxbarga meneger qo'shishga ruxsat beriladi");
+    }
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
 export const verifyAdminMiddleware = (req, res, next) => {
   try {
     const role = req.user.role;

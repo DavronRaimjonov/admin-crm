@@ -4,7 +4,10 @@ import {
   editedAuthMiddleware,
   leaveStaffMiddleware,
 } from "../../middleware/validator.middleware.js";
-import { verifyMenejerMiddleware } from "../../middleware/role.middleware.js";
+import {
+  verifyMenejerMiddleware,
+  verifySeoMiddleware,
+} from "../../middleware/role.middleware.js";
 import { verifyTokenMiddleware } from "../../middleware/verify.middleware.js";
 import {
   create_admin,
@@ -23,7 +26,7 @@ router.post(
   "/create-manager",
   verifyTokenMiddleware,
   createAuthMiddleware,
-  verifyMenejerMiddleware,
+  verifySeoMiddleware,
   create_manager
 );
 router.post(

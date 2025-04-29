@@ -9,7 +9,7 @@ const authSchema = new Schema(
     image: { type: String, default: "" },
     role: {
       type: String,
-      enum: ["admin", "manager"],
+      enum: ["admin", "manager", "raxbar"],
       default: "admin",
     },
     work_date: { type: Date, default: new Date() },
@@ -26,7 +26,7 @@ const authSchema = new Schema(
         {
           start_date: { type: Date },
           end_date: { type: Date },
-          reason: { type: String  },
+          reason: { type: String },
         },
       ],
       default: [],

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  edit_password,
   edit_profile,
   edit_profile_img,
   sign_in,
@@ -24,5 +25,6 @@ router.post(
   upload.single("image"),
   edit_profile_img
 );
+router.post("/edit-password", verifyTokenMiddleware, edit_password);
 
 export { router };

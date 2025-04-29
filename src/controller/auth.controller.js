@@ -4,8 +4,6 @@ import { genereteJwt, hashPassword } from "../utils/jwt.js";
 import { CustomError, ResData } from "../utils/responseHelpers.js";
 import bcrypt from "bcrypt";
 
-
-
 export const sign_in = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -69,6 +67,27 @@ export const edit_profile_img = async (req, res, next) => {
     const resData = new ResData(200, "success", { image: result.secure_url });
 
     res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const edit_password = async (req, res, next) => {
+  try {
+    const { current_password, new_password } = req.body;
+
+    if (!current_password || !new_password) {
+      throw new CustomError(400, "current_password, new_password must be");
+    }
+
+    let user = await User.findOne({ _id: req.user._id });
+    if (!user) throw new CustomError(400, "User not defined");
+    let verifyPassword = bcrypt.compare(current_password, user.password);
+    if (!verifyPassword) throw new CustomError(400, "Current password wrong");
+    const newPassword = await hashPassword(new_password);
+    user.password = newPassword;
+    await user.save();
+    res.status(200).json({ message: "Parol o'zgartrildi" });
   } catch (error) {
     next(error);
   }
