@@ -6,7 +6,7 @@ export const verifyMenejerMiddleware = (req, res, next) => {
     if (!role) {
       throw new CustomError(403, "Rusxat yo'q");
     }
-    if (role !== "manager") {
+    if (role !== "manager" && role !== "raxbar") {
       throw new CustomError(403, "Faqat managerga ruxsat beriladi");
     }
 
@@ -21,8 +21,11 @@ export const verifySeoMiddleware = (req, res, next) => {
     if (!role) {
       throw new CustomError(403, "Rusxat yo'q");
     }
-    if (role !== "seo") {
-      throw new CustomError(403, "Faqat raxbarga meneger qo'shishga ruxsat beriladi");
+    if (role !== "raxbar") {
+      throw new CustomError(
+        403,
+        "Faqat raxbarga meneger qo'shishga ruxsat beriladi"
+      );
     }
 
     next();

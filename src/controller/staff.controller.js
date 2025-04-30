@@ -29,21 +29,50 @@ export const create_admin = async (req, res, next) => {
 export const edited_admin = async (req, res, next) => {
   try {
     const user = req.body;
+
     if (!user._id) {
       throw new CustomError(400, "_id must be");
     }
-
-    let updateAdmin = await User.findByIdAndUpdate(
-      { _id: user._id },
-      { $set: { ...user } },
-      {
-        new: true,
-      }
-    ).select("-password");
-    if (!updateAdmin) {
-      throw new CustomError(404, "Admin topilmadi");
+    const existingUser = await User.findById(user._id).select("role");
+    if (!existingUser) {
+      throw new CustomError(404, "Xodim topilmadi");
     }
-    const resData = new ResData(200, "Admin yangilandi", updateAdmin);
+    if (existingUser.role !== "admin") {
+      throw new CustomError(403, "Faqat admin o'zgartiriladi");
+    }
+    const updateAdmin = await User.findByIdAndUpdate(
+      user._id,
+      { $set: { ...user } },
+      { new: true }
+    ).select("-password");
+
+    const resData = new ResData(200, "Xodim yangilandi", updateAdmin);
+    res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};
+export const edited_manager = async (req, res, next) => {
+  try {
+    const user = req.body;
+
+    if (!user._id) {
+      throw new CustomError(400, "_id must be");
+    }
+    const existingUser = await User.findById(user._id).select("role");
+    if (!existingUser) {
+      throw new CustomError(404, "Xodim topilmadi");
+    }
+    if (existingUser.role !== "manager") {
+      throw new CustomError(403, "Faqat manager o'zgartiriladi");
+    }
+    const updateAdmin = await User.findByIdAndUpdate(
+      user._id,
+      { $set: { ...user } },
+      { new: true }
+    ).select("-password");
+
+    const resData = new ResData(200, "Xodim yangilandi", updateAdmin);
     res.status(resData.status).json(resData);
   } catch (error) {
     next(error);
@@ -53,7 +82,7 @@ export const edited_admin = async (req, res, next) => {
 export const getAllManagers = async (req, res, next) => {
   try {
     const { status } = req.query;
-    const filter = { role: "manager" }; 
+    const filter = { role: "manager" };
 
     if (status) {
       filter.status = status;
@@ -61,7 +90,7 @@ export const getAllManagers = async (req, res, next) => {
 
     const managers = await User.find(filter).select("-password");
     const result = status && !managers.length ? [] : managers;
-    const resData = new ResData(200, "success", result); 
+    const resData = new ResData(200, "success", result);
     res.status(resData.status).json(resData);
   } catch (error) {
     next(error);
@@ -88,6 +117,23 @@ export const getAllAdmins = async (req, res, next) => {
   }
 };
 
+export const findOneUser = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    if (!id) {
+      throw new CustomError(400, "Id  must be");
+    }
+    const user = await User.findOne({ _id: id });
+    if (!user) {
+      throw new CustomError(400, "User not found");
+    }
+    const resData = new ResData(200, "succses", user);
+    res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};
 export const getDeletedWorks = async (req, res, next) => {
   try {
     const managers = await User.find({ is_deleted: true }).select("-password");
@@ -123,6 +169,15 @@ export const deleted_admin = async (req, res, next) => {
 export const leave_staff = async (req, res, next) => {
   try {
     const body = req.body;
+
+    const user = await User.findOne({ _id: body._id });
+    if (user.is_deleted) {
+      throw new CustomError(
+        400,
+        "Ishdan bo'shatilgan xodimni ta'tilga chiqarib bo'lmaydi."
+      );
+    }
+
     await User.findByIdAndUpdate(body._id, {
       $push: {
         leave_history: {

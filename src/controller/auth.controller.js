@@ -82,7 +82,7 @@ export const edit_password = async (req, res, next) => {
 
     let user = await User.findOne({ _id: req.user._id });
     if (!user) throw new CustomError(400, "User not defined");
-    let verifyPassword = bcrypt.compare(current_password, user.password);
+    let verifyPassword = await bcrypt.compare(current_password, user.password);
     if (!verifyPassword) throw new CustomError(400, "Current password wrong");
     const newPassword = await hashPassword(new_password);
     user.password = newPassword;
