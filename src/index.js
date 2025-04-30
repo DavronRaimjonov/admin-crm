@@ -6,6 +6,7 @@ import { connectDB } from "./config/db.config.js";
 import { router } from "./routes/router.js";
 import cookieParser from "cookie-parser";
 import { run_cron } from "./cron/index.js";
+import { cors_links } from "./utils/utils.js";
 
 const app = express();
 
@@ -15,7 +16,7 @@ const PORT = process.env.PORT || 7070;
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: cors_links,
     credentials: true,
   })
 );

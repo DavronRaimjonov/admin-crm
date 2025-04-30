@@ -1,0 +1,19 @@
+import { Schema, model } from "mongoose";
+
+const groupSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    teacher: { type: Schema.Types.ObjectId, ref: "Teacher", required: true },
+    students: [{ type: Schema.Types.ObjectId, ref: "Student" }],
+    is_deleted: { type: Boolean, default: false },
+    started_group: { type: Date, required: true },
+    end_group: { type: Date, required: true },
+    disable: { type: Boolean, default: false },
+  },
+  {
+    versionKey: false,
+    timestamps: true,
+  }
+);
+
+export default model("Group", groupSchema);
