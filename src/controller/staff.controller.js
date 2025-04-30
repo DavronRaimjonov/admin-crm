@@ -235,3 +235,28 @@ export const leave_exit_staff = async (req, res, next) => {
     next(error);
   }
 };
+
+export const return_to_work_staff = async (req, res, next) => {
+  try {
+    const { _id } = req.body;
+    if (!_id) {
+      throw new CustomError(400, "_id must be");
+    }
+    const user = await User.findOne({ _id });
+    if (!user) throw new CustomError(400, "User not found");
+
+    if (!user.is_deleted) {
+      throw new CustomError(400, "Xodim allaqachon  ishlamoqda");
+    }
+    user.status = "faol";
+    user.active = true;
+    user.is_deleted = false;
+    user.work_end = null;
+    user.work_date = new Date();
+    await user.save();
+
+    res.status(200).json({ message: "Ishga qaytarildi" });
+  } catch (error) {
+    next(error);
+  }
+};

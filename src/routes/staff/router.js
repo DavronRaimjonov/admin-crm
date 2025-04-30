@@ -21,6 +21,7 @@ import {
   getDeletedWorks,
   leave_exit_staff,
   leave_staff,
+  return_to_work_staff,
 } from "../../controller/staff.controller.js";
 const router = Router();
 router.use(verifyTokenMiddleware);
@@ -60,5 +61,10 @@ router.post(
   leave_staff
 );
 router.post("/leave-exit-staff", verifyMenejerMiddleware, leave_exit_staff);
+router.post(
+  "/return-work-staff",
+  verifyMenejerMiddleware,
+  return_to_work_staff
+);
 
 export { router };
