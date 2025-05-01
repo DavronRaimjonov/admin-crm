@@ -8,4 +8,4 @@ export const teacherValidation = Joi.object({
   password: Joi.string().min(6).required(),
   work_date: Joi.string(),
   field: Joi.string().required(),
-});
+}).required();
