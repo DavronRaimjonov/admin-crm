@@ -38,3 +38,40 @@ export const get_all_teachers = async (req, res, next) => {
     next(error);
   }
 };
+export const get_one_taacher = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (!id) {
+      throw new CustomError(400, "Id  must be");
+    }
+    const teacher = await Teacher.findOne({ _id: id });
+    if (!teacher) {
+      throw new CustomError(400, "Teacher not found");
+    }
+    const resData = new ResData(200, "succses", teacher);
+    res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const fire_teacher = async (req, res, next) => {
+  try {
+    const { _id } = req.body;
+    if (!_id) throw new CustomError(400, "_id must be");
+    const teacher = await Teacher.findOne({ _id });
+    if (!teacher) throw new CustomError(400, "Ustoz topilmadi");
+    if (teacher.status === "ishdan bo'shatilgan")
+      throw new CustomError(
+        400,
+        `Ustoz allaqachon ishdan bo'shatilgan ${teacher.work_end}`
+      );
+    teacher.is_deleted = true;
+    teacher.status = "ishdan bo'shatilgan";
+    teacher.work_end = Date.now();
+    await teacher.save();
+    res.status(200).json({ message: "Ustoz ishdan bo'shatildi" });
+  } catch (error) {
+    next(error);
+  }
+};

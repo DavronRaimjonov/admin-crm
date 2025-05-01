@@ -10,7 +10,6 @@ import { editedProfileMiddlwere } from "../../middleware/validator.middleware.js
 import { upload } from "../../config/multer.js";
 
 const router = Router();
-
 router.post("/sign-in", sign_in);
 router.post(
   "/edit-profile",
@@ -25,6 +24,7 @@ router.post(
   upload.single("image"),
   edit_profile_img
 );
+router.post("/edit-password", verifyTokenMiddleware, edit_password);
 router.post("/edit-password", verifyTokenMiddleware, edit_password);
 
 export { router };
