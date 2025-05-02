@@ -15,7 +15,7 @@ const teacherSchema = new Schema(
       type: String,
       enum: [
         "Frontend dasturlash",
-        "Backand dasturlash",
+        "Backend dasturlash",
         "Rus tili",
         "Ingliz tili",
       ],
