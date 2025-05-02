@@ -37,3 +37,16 @@ export const get_all_group = async (req, res, next) => {
     next(error);
   }
 };
+
+export const search_teacher = async (req, res, next) => {
+  const name = req.query.name;
+  if (!name) {
+    throw new CustomError(400, "name must be");
+  }
+  const teachers = await Teacher.find({
+    first_name: { $regex: name, $options: "i" },
+  });
+
+  const resData = new ResData(200, "succses", teachers);
+  res.status(resData.status).json(resData);
+};
