@@ -75,3 +75,23 @@ export const fire_teacher = async (req, res, next) => {
     next(error);
   }
 };
+
+export const return_teacher_work = async (req, res, next) => {
+  try {
+    const { _id } = req.body;
+    if (!_id) {
+      throw new CustomError(400, "_id must be");
+    }
+    const teacher = await Teacher.findOne({ _id });
+    if (!teacher) throw new CustomError(400, "Ustoz topilmadi");
+    teacher.is_deleted = false;
+    teacher.status = "faol";
+    teacher.work_date = Date.now();
+    teacher.work_end = null;
+
+    await teacher.save();
+    res.status(200).json({ message: "Ustoz ishga qaytarildi" });
+  } catch (error) {
+    next(error);
+  }
+};
