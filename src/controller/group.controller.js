@@ -1,6 +1,6 @@
 import Group from "../schema/group.schema.js";
 import Teacher from "../schema/techer.schema.js";
-import { CustomError } from "../utils/responseHelpers.js";
+import { CustomError, ResData } from "../utils/responseHelpers.js";
 
 export const create_group = async (req, res, next) => {
   try {
@@ -11,8 +11,10 @@ export const create_group = async (req, res, next) => {
     }
 
     let group = await Group.create({ ...body });
-
-    res.json(group);
+    teacher.groups.push(group._id);
+    await teacher.save();
+    const resData = new ResData(200, "succses", group);
+    res.status(resData.status).json(resData);
   } catch (error) {
     next(error);
   }

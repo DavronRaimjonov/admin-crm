@@ -7,7 +7,7 @@ const groupSchema = new Schema(
     students: [{ type: Schema.Types.ObjectId, ref: "Student" }],
     is_deleted: { type: Boolean, default: false },
     started_group: { type: Date, required: true },
-    end_group: { type: Date, required: true },
+    end_group: { type: Date, default: null },
     disable: { type: Boolean, default: false },
   },
   {
