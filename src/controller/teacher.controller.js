@@ -6,8 +6,18 @@ export const create_teacher = async (req, res, next) => {
   try {
     const body = req.body;
     const techer = await Teacher.findOne({ email: body.email });
+
     if (techer) {
       throw new CustomError(400, "Email al ready exsist");
+    }
+    const filed = [
+      "Frontend dasturlash",
+      "Backand dasturlash",
+      "Rus tili",
+      "Ingliz tili",
+    ];
+    if (!filed.includes(body.field)) {
+      throw new CustomError(400, "Group nomi xato");
     }
     const password = await hashPassword(body.password);
     await Teacher.create({ ...body, password });
