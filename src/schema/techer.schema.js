@@ -11,7 +11,16 @@ const teacherSchema = new Schema(
     groups: [{ type: Schema.Types.ObjectId, ref: "Group" }],
     work_date: { type: Date, default: new Date() },
     work_end: { type: Date, default: null },
-    field: { type: String, required: true },
+    field: {
+      type: String,
+      enum: [
+        "Frontend dasturlash",
+        "Backand dasturlash",
+        "Rus tili",
+        "Ingliz tili",
+      ],
+      required: true,
+    },
     status: {
       type: String,
       enum: ["faol", "ishdan bo'shatilgan"],
