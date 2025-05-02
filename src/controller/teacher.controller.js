@@ -17,7 +17,7 @@ export const create_teacher = async (req, res, next) => {
       "Ingliz tili",
     ];
     if (!filed.includes(body.field)) {
-      throw new CustomError(400, "Group nomi xato");
+      throw new CustomError(400, "Ustoz yo'nalishi xato");
     }
     const password = await hashPassword(body.password);
     await Teacher.create({ ...body, password });
