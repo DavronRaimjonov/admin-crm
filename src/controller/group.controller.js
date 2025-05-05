@@ -28,25 +28,93 @@ export const create_group = async (req, res, next) => {
 
 export const get_all_group = async (req, res, next) => {
   try {
-    const groups = await Group.find().populate("teacher");
+    const { is_deleted, search } = req.query;
+    let filter = {};
 
-    const resData = new ResData(200, "status", groups);
+    if (is_deleted !== undefined) {
+      filter.is_deleted = is_deleted === "true";
+    }
 
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+    console.log(filter);
+    const groups = await Group.find(filter)
+      .populate("teacher")
+      .populate("students");
+    const result = search && !groups.length ? [] : groups;
+    const resData = new ResData(200, "status", result);
     res.status(resData.status).json(resData);
   } catch (error) {
     next(error);
   }
 };
 
-export const search_teacher = async (req, res, next) => {
-  const name = req.query.name;
-  if (!name) {
-    throw new CustomError(400, "name must be");
-  }
-  const teachers = await Teacher.find({
-    first_name: { $regex: name, $options: "i" },
-  });
+export const get_one_group = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    if (id) throw new CustomError(400, "id must be");
 
-  const resData = new ResData(200, "succses", teachers);
-  res.status(resData.status).json(resData);
+     
+
+     
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const search_teacher = async (req, res, next) => {
+  try {
+    const name = req.query.name;
+    if (!name) {
+      throw new CustomError(400, "name must be");
+    }
+    const teachers = await Teacher.find({
+      first_name: { $regex: name, $options: "i" },
+    });
+
+    const resData = new ResData(200, "succses", teachers);
+    res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};
+export const edit_end_group = async (req, res, next) => {
+  try {
+    const { _id, date } = req.body;
+    if (!_id || !date) throw new CustomError(400, "_id or date must be");
+    const group = await Group.findOne({ _id });
+
+    if (group.is_deleted) {
+      throw new CustomError(
+        400,
+        "Guruh tugallangan vaqtni o'zgartira olmaysiz !"
+      );
+    }
+
+    if (!group) throw new CustomError(400, "Gruh topilmadi");
+    group.end_group = date;
+    await group.save();
+
+    res.status(200).json({ message: "Guruh tugash vaqti o'zgartrildi", group });
+  } catch (error) {
+    next(error);
+  }
+};
+export const end_group = async (req, res, next) => {
+  try {
+    const { _id } = req.body;
+    if (!_id) throw new CustomError(400, "_id must be");
+    const group = await Group.findOne({ _id });
+    if (!group) throw new CustomError(400, "Guruh topilmadi");
+    if (group.is_deleted) {
+      throw new CustomError(400, "Guruh allaqachon o'chirilgan !");
+    }
+    group.is_deleted = true;
+    group.end_group = new Date();
+    group.save();
+    res.status(200).json({ message: "Guruh yakunlandi", group });
+  } catch (error) {
+    next(error);
+  }
 };

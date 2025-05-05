@@ -42,7 +42,12 @@ export const get_all_teachers = async (req, res, next) => {
 
     const teacher = await Teacher.find(filter)
       .select("-password")
-      .populate("groups");
+      .populate({
+        path: "groups",
+        populate: {
+          path: "students",
+        },
+      });
     const result = search && !teacher.length ? [] : teacher;
     const resData = new ResData(200, "sucsses", result);
     res.status(resData.status).json(resData);
@@ -56,7 +61,14 @@ export const get_one_taacher = async (req, res, next) => {
     if (!id) {
       throw new CustomError(400, "Id  must be");
     }
-    const teacher = await Teacher.findOne({ _id: id }).populate("groups");
+    const teacher = await Teacher.findOne({ _id: id })
+      .select("-password1")
+      .populate({
+        path: "groups",
+        populate: {
+          path: "students",
+        },
+      });
     if (!teacher) {
       throw new CustomError(400, "Teacher not found");
     }

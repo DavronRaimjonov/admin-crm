@@ -2,6 +2,8 @@ import { Router } from "express";
 import { verifyTokenMiddleware } from "../../middleware/verify.middleware.js";
 import {
   create_group,
+  edit_end_group,
+  end_group,
   get_all_group,
   search_teacher,
 } from "../../controller/group.controller.js";
@@ -17,6 +19,8 @@ router.post(
   createGroupMiddleware,
   create_group
 );
+router.put("/edit-end-group", verifyStaffMiddleware, edit_end_group);
+router.delete("/end-group", verifyStaffMiddleware, end_group);
 router.get("/get-all-group", get_all_group);
 router.get("/search-teacher", search_teacher);
 
