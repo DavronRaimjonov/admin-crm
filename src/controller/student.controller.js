@@ -32,7 +32,9 @@ export const search_group = async (req, res, next) => {
     const grpup = await Group.find({
       name: { $regex: name, $options: "i" },
       is_deleted: false,
-    });
+    })
+      .populate("teacher")
+      .populate("students");
 
     const resData = new ResData(200, "succses", grpup);
     res.status(resData.status).json(resData);
