@@ -41,6 +41,17 @@ const studentSchema = new Schema(
       default: "faol",
     },
     is_deleted: { type: Boolean, default: false },
+    leave_history: {
+      type: [
+        {
+          start_date: { type: Date },
+          end_date: { type: Date },
+          days: { type: Number },
+          reason: { type: String },
+        },
+      ],
+      default: [],
+    },
   },
   {
     versionKey: false,

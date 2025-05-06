@@ -7,6 +7,9 @@ import {
   deleted_student,
   get_all_students,
   get_one_student,
+  leave_student,
+  return_leave_student,
+  return_student,
   search_group,
 } from "../../controller/student.controller.js";
 import { createStudentMiddleware } from "../../middleware/validator.middleware.js";
@@ -24,6 +27,13 @@ router.post(
   "/added-new-group-student",
   verifyStaffMiddleware,
   added_new_group_student
+);
+router.post("/return-student", verifyStaffMiddleware, return_student);
+router.post("/leave-student", verifyStaffMiddleware, leave_student);
+router.post(
+  "/return-leave-student",
+  verifyStaffMiddleware,
+  return_leave_student
 );
 router.delete("/delete-student", verifyStaffMiddleware, deleted_student);
 

@@ -1,6 +1,7 @@
 import Group from "../schema/group.schema.js";
 import Student from "../schema/students.schema.js";
 import { CustomError, ResData } from "../utils/responseHelpers.js";
+import dayjs from "dayjs";
 
 export const create_student = async (req, res, next) => {
   try {
@@ -103,6 +104,11 @@ export const added_new_group_student = async (req, res, next) => {
     ) {
       throw new CustomError(400, "Bir o'quvchi faqat 4 ta guruhda o'qiy oladi");
     }
+    if (student.status === "ta'tilda")
+      throw new CustomError(
+        400,
+        "Ta'tildagi o'quvchini guruhga biriktirib bo'lmaydi"
+      );
     const group = await Group.findOne({ _id: group_id });
     if (!group || group.is_deleted) {
       throw new CustomError(
@@ -135,7 +141,11 @@ export const deleted_student = async (req, res, next) => {
     const { _id } = req.body;
     if (!_id) throw new CustomError(400, "_id must be");
     const student = await Student.findOne({ _id });
-    if (!student || student.is_deleted) throw new CustomError(400, "O'quvchi topilmadi yoki allaqachon markazdan chiqib ketkan");
+    if (!student || student.is_deleted)
+      throw new CustomError(
+        400,
+        "O'quvchi topilmadi yoki allaqachon markazdan chiqib ketkan"
+      );
     student.is_deleted = true;
     student.status = "yakunladi";
     student.groups = student.groups.map((value) => {
@@ -148,8 +158,94 @@ export const deleted_student = async (req, res, next) => {
   }
 };
 
+export const return_student = async (req, res, next) => {
+  try {
+    const { _id } = req.body;
+    if (!_id) throw new CustomError(400, "_id must be");
+    const student = await Student.findOne({ _id });
+    if (!student || !student.is_deleted)
+      throw new CustomError(
+        400,
+        "O'quvchi topilmadi yoki allaqachon aktiv xolatda"
+      );
 
+    student.is_deleted = false;
+    student.status = "faol";
 
+    await student.save();
 
+    res.status(200).json({ message: "O'quvchi markazga qaytarildi", student });
+  } catch (error) {
+    next(error);
+  }
+};
 
+export const leave_student = async (req, res, next) => {
+  try {
+    const { student_id, leave_days, reason } = req.body;
+    if (!student_id || !leave_days || !reason)
+      throw new CustomError(400, "student_id leave_days, reason majburiy");
+    const student = await Student.findOne({ _id: student_id });
+    if (!student || student.is_deleted)
+      throw new CustomError(
+        400,
+        "O'quvchi topilmadi yoki o'quvchi markazni tark etkan"
+      );
+    if (student.status === "ta'tilda")
+      throw new CustomError(400, "O'quvchi allaqachon ta'tilga yuborilgan");
+    student.status = "ta'tilda";
+    student.groups.forEach((group) => {
+      group.exitedAt = new Date();
+      group.status = "chiqdi";
+    });
 
+    const startDate = dayjs().startOf("day"); // bugun
+    const endDate = startDate.add(leave_days, "day");
+
+    student.leave_history.push({
+      start_date: startDate.toDate(),
+      end_date: endDate.toDate(),
+      days: Number(leave_days),
+      reason: reason,
+    });
+
+    await student.save();
+    res.status(200).json({
+      message: `O'quvchi vaqtincha ${leave_days} ta'tilga chiqarildi`,
+      student,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const return_leave_student = async (req, res, next) => {
+  try {
+    const { student_id } = req.body;
+    if (!student_id) throw new CustomError(400, "student_id must be");
+    const student = await Student.findOne({ _id: student_id });
+    if (!student || student.is_deleted)
+      throw new CustomError(
+        400,
+        "O'quvchi topilmadi yoki o'quvchi markazni tark etkan"
+      );
+    if (student.status === "faol")
+      throw new CustomError(400, "O'quvchi allaqachon faol");
+
+    const lastLeave = student.leave_history[student.leave_history.length - 1];
+    if (lastLeave) {
+      lastLeave.end_date = dayjs().toDate();
+      lastLeave.days = dayjs(lastLeave.end_date).diff(
+        dayjs(lastLeave.start_date),
+        "day"
+      );
+    }
+    student.status = "faol";
+    await student.save();
+    res
+      .status(200)
+      .json({ message: "O'quvchi vaqtincha ta'tildan qaytarilid", student });
+  } catch (error) {
+    next(error);
+  }
+};
