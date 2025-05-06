@@ -116,6 +116,14 @@ export const added_new_group_student = async (req, res, next) => {
         "Bunday guruh topilmadi yoki guruh yakunlangan"
       );
     }
+    if (
+      student.groups.find(
+        (value) =>
+          value.group.toString() === group_id && value.status === "aktiv"
+      )
+    ) {
+      throw new CustomError(400, "O'quvchi allaqachon bu guruhda mavjud");
+    }
     const newGroup = {
       group: group_id,
       joinedAt: joinedAt,
