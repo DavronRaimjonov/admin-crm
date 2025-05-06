@@ -19,7 +19,7 @@ const groupSchema = new Schema(
     group: { type: Schema.Types.ObjectId, ref: "Group", required: true },
     status: {
       type: String,
-      enum: ["aktiv", "chiqdi"],
+      enum: ["aktiv", "chiqdi", "bitirgan"],
       default: "aktiv",
     },
     joinedAt: { type: Date, default: Date.now },
@@ -37,7 +37,7 @@ const studentSchema = new Schema(
     groups: [groupSchema],
     status: {
       type: String,
-      enum: ["faol", "ta'tilda", "yakunladi"],
+      enum: ["faol", "ta'tilda", "yakunladi", "bitirgan"],
       default: "faol",
     },
     is_deleted: { type: Boolean, default: false },
