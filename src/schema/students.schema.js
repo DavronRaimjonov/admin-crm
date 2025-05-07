@@ -35,6 +35,7 @@ const studentSchema = new Schema(
     phone: { type: String, default: null },
     adress: { type: String, default: null },
     groups: [groupSchema],
+    all_price_group: { type: Number, default: 0 },
     status: {
       type: String,
       enum: ["faol", "ta'tilda", "yakunladi", "bitirgan"],

@@ -53,11 +53,17 @@ export const get_all_group = async (req, res, next) => {
 export const get_one_group = async (req, res, next) => {
   try {
     const id = req.params.id;
-    if (id) throw new CustomError(400, "id must be");
+    if (!id) throw new CustomError(400, "id must be");
 
-     
+    const group = await Group.findOne({ _id: id })
+      .populate("teacher")
+      .populate("students");
 
-     
+    if (!group) throw new CustomError(400, "Guruh topilmadi");
+
+    const resData = new ResData(200, "succses", group);
+
+    res.status(resData.status).json(resData);
   } catch (error) {
     next(error);
   }
@@ -114,6 +120,27 @@ export const end_group = async (req, res, next) => {
     group.end_group = new Date();
     group.save();
     res.status(200).json({ message: "Guruh yakunlandi", group });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const edit_price_group = async (req, res, next) => {
+  try {
+    const { group_id, price } = req.body;
+    if (!group_id || !price)
+      throw new CustomError(400, "group_id yoki price majburiy");
+    const group = await Group.findOne({ _id: group_id });
+    if (!group) throw new CustomError(400, "Guruh topilmadi");
+    if (group.is_deleted || group.disable)
+      throw new CustomError(400, "Guruh yakunlangan");
+
+    group.price = price;
+    await group.save();
+
+    const resData = new ResData(200, "Guruh narxi o'zgartrildi", group);
+
+    res.status(resData.status).json(resData);
   } catch (error) {
     next(error);
   }

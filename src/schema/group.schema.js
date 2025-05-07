@@ -9,6 +9,7 @@ const groupSchema = new Schema(
     started_group: { type: Date, required: true },
     end_group: { type: Date, default: null },
     disable: { type: Boolean, default: false },
+    price: { type: Number, required: true },
   },
   {
     versionKey: false,

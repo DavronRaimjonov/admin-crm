@@ -4,4 +4,5 @@ export const createGroupValidation = Joi.object({
   name: Joi.string().required(),
   teacher: Joi.string().required(),
   started_group: Joi.date().required(),
+  price: Joi.number().required(),
 }).required();

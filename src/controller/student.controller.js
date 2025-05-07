@@ -124,6 +124,7 @@ export const added_new_group_student = async (req, res, next) => {
     ) {
       throw new CustomError(400, "O'quvchi allaqachon bu guruhda mavjud");
     }
+
     const newGroup = {
       group: group_id,
       joinedAt: joinedAt,
@@ -131,7 +132,7 @@ export const added_new_group_student = async (req, res, next) => {
       exitedAt: null,
       payments: [],
     };
-
+    student.all_price_group += group.price;
     student.groups.push(newGroup);
     group.students.push(student._id);
 
@@ -257,3 +258,5 @@ export const return_leave_student = async (req, res, next) => {
     next(error);
   }
 };
+
+// student payment methods
