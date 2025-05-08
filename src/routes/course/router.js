@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { verifyTokenMiddleware } from "../../middleware/verify.middleware.js";
-import { verifySeoMiddleware } from "../../middleware/role.middleware.js";
+import { verifyMenejerMiddleware } from "../../middleware/role.middleware.js";
 import {
   add_category,
   create_course,
@@ -10,10 +10,10 @@ import { createCourseMiddleware } from "../../middleware/validator.middleware.js
 
 const router = Router();
 router.use(verifyTokenMiddleware);
-router.post("/create-category", verifySeoMiddleware, add_category);
+router.post("/create-category", verifyMenejerMiddleware, add_category);
 router.post(
   "/create-courses",
-  verifySeoMiddleware,
+  verifyMenejerMiddleware,
   createCourseMiddleware,
   create_course
 );

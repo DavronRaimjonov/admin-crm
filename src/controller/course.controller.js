@@ -77,3 +77,17 @@ export const get_courses = async (req, res, next) => {
     next(error);
   }
 };
+
+
+export const edit_course = async (req, res, next)=>{
+    try {
+
+           
+
+
+
+        
+    } catch (error) {
+        next(error)
+    }
+}
