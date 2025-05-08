@@ -1,0 +1,69 @@
+import Category from "../schema/course-cateogry.schema.js";
+import Course from "../schema/course.schema.js";
+import { CustomError, ResData } from "../utils/responseHelpers.js";
+export const add_category = async (req, res, next) => {
+  try {
+    const { name } = req.body;
+
+    if (!name) {
+      throw new CustomError(400, "name must be");
+    }
+    const existingCategory = await Category.findOne({ name });
+
+    if (existingCategory) {
+      throw new CustomError(400, "Bunday nomdagi kategoriya allaqachon mavjud");
+    }
+    const newCategory = await Category.create({ name });
+    const resData = new ResData(
+      201,
+      "Kategoriya muvaffaqiyatli qo‘shildi",
+      newCategory
+    );
+    res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const create_course = async (req, res, next) => {
+  try {
+    const body = req.body;
+
+    const category = await Category.findOne({ name: body.name });
+
+    if (!category) {
+      throw new CustomError(400, "Bunday nomdagi course yaratilmagan ");
+    }
+
+    let course = await Course.create({
+      description: body.description,
+      price: body.price,
+      duration: body.duration,
+      name: category._id,
+    });
+
+    course = await Course.findById(course._id).populate("name");
+
+    const resData = new ResData(201, "succses", course);
+    res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};
+export const get_courses = async (req, res, next) => {
+  try {
+    const { search } = req.query;
+    let filter = {};
+
+    if (search) {
+      filter = {
+        name: { $regex: search, $options: "i" },
+      };
+    }
+    let courses = await Course.find(filter).populate("name");
+    const resData = new ResData(200, "succses", courses);
+    res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};

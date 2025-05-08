@@ -29,6 +29,13 @@ export const show_payment_student = async (req, res, next) => {
   }
 };
 
+export const get_debtors_student = () => {
+  try {
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const create_payment_student = () => {
   try {
   } catch (error) {}
