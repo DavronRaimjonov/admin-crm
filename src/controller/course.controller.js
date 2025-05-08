@@ -35,6 +35,10 @@ export const create_course = async (req, res, next) => {
       throw new CustomError(400, "Bunday nomdagi course yaratilmagan ");
     }
 
+    const existingCourse = await Course.findOne({ name: category._id });
+    if (existingCourse) {
+      throw new CustomError(400, "Bunday nomdagi kurs mavjud");
+    }
     let course = await Course.create({
       description: body.description,
       price: body.price,
