@@ -56,10 +56,16 @@ export const get_courses = async (req, res, next) => {
     let filter = {};
 
     if (search) {
-      filter = {
+      const categories = await Category.find({
         name: { $regex: search, $options: "i" },
+      });
+
+      const categoryIds = categories.map((cat) => cat._id);
+      filter = {
+        name: { $in: categoryIds },
       };
     }
+
     let courses = await Course.find(filter).populate("name");
     const resData = new ResData(200, "succses", courses);
     res.status(resData.status).json(resData);
