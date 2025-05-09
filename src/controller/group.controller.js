@@ -30,7 +30,6 @@ export const create_group = async (req, res, next) => {
   try {
     const { teacher: teacherId, course_id, ...rest } = req.body;
 
-    // 1) nameni bodydan olmaslik kerak
     if (rest.name) {
       throw new CustomError(
         400,
@@ -38,7 +37,6 @@ export const create_group = async (req, res, next) => {
       );
     }
 
-    // 2) Ustozni topish
     const teacher = await Teacher.findById(teacherId);
     if (!teacher) {
       throw new CustomError(400, "Ustoz topilmadi");

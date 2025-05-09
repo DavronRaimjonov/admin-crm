@@ -1,3 +1,4 @@
+import Course from "../schema/course.schema.js";
 import Teacher from "../schema/techer.schema.js";
 import { hashPassword } from "../utils/jwt.js";
 import { CustomError, ResData } from "../utils/responseHelpers.js";
@@ -6,21 +7,18 @@ export const create_teacher = async (req, res, next) => {
   try {
     const body = req.body;
     const techer = await Teacher.findOne({ email: body.email });
+    const course = await Course.findOne({ _id: body.course_id }).populate(
+      "name"
+    );
+    if (!course)
+      throw new CustomError(400, "Bunday kurs boyicha ustoz olib bo'lmaydi");
 
     if (techer) {
       throw new CustomError(400, "Email al ready exsist");
     }
-    const filed = [
-      "Frontend dasturlash",
-      "Backend dasturlash",
-      "Rus tili",
-      "Ingliz tili",
-    ];
-    if (!filed.includes(body.field)) {
-      throw new CustomError(400, "Ustoz yo'nalishi xato");
-    }
+
     const password = await hashPassword(body.password);
-    await Teacher.create({ ...body, password });
+    await Teacher.create({ ...body, password, field: course.name.name });
     res.status(201).json({ message: "Ustoz qo'shildi" });
     res.send("ok");
   } catch (error) {

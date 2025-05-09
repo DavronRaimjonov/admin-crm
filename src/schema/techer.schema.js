@@ -13,12 +13,6 @@ const teacherSchema = new Schema(
     work_end: { type: Date, default: null },
     field: {
       type: String,
-      enum: [
-        "Frontend dasturlash",
-        "Backend dasturlash",
-        "Rus tili",
-        "Ingliz tili",
-      ],
       required: true,
     },
     status: {
