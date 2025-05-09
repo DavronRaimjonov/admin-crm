@@ -25,35 +25,58 @@ export const search_course = async (req, res, next) => {
     next(error);
   }
 };
+
 export const create_group = async (req, res, next) => {
   try {
-    const body = req.body;
-    if (body.name) {
+    const { teacher: teacherId, course_id, ...rest } = req.body;
+
+    // 1) nameni bodydan olmaslik kerak
+    if (rest.name) {
       throw new CustomError(
         400,
         "Group nomi avtomatik yaratiladi, qo‘lda berib bo‘lmaydi"
       );
     }
-    const teacher = await Teacher.findOne({ _id: body.teacher });
+
+    // 2) Ustozni topish
+    const teacher = await Teacher.findById(teacherId);
     if (!teacher) {
       throw new CustomError(400, "Ustoz topilmadi");
     }
-    const course = await Course.findOne({ _id: body.course });
+
+    const course = await Course.findById(course_id).populate("name");
     if (!course) {
       throw new CustomError(400, "Course topilmadi");
     }
+    const courseName = course.name.name;
 
-    const groupCount = await Group.countDocuments({ course: body.course });
+    const groupCount = await Group.countDocuments({ course: course_id });
 
-    const groupName = `${course.name} N${groupCount + 1}`;
+    const groupName = `${courseName} N${groupCount + 1}`;
 
-    let group = await Group.create({ ...body, name: groupName });
-    teacher.groups.push(group._id);
+    const newGroup = await Group.create({
+      ...rest,
+      teacher: teacherId,
+      course: course_id,
+      name: groupName,
+      price: course.price,
+    });
+
+    teacher.groups.push(newGroup._id);
     await teacher.save();
 
-    // Response
-    const resData = new ResData(200, "succses", group);
-    res.status(resData.status).json(resData);
+    const populatedGroup = await Group.findById(newGroup._id)
+      .populate({
+        path: "teacher",
+        select: "first_name last_name email phone field status",
+      })
+      .populate({
+        path: "course",
+        populate: { path: "name", select: "name" },
+      });
+
+    // 9) Javobni yuborish
+    res.status(200).json(new ResData(200, "succses", populatedGroup));
   } catch (error) {
     next(error);
   }

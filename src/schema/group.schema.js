@@ -5,6 +5,7 @@ const groupSchema = new Schema(
     name: { type: String, required: true },
     teacher: { type: Schema.Types.ObjectId, ref: "Teacher", required: true },
     students: [{ type: Schema.Types.ObjectId, ref: "Student" }],
+    course: { type: Schema.Types.ObjectId, ref: "Course", required: true },
     is_deleted: { type: Boolean, default: false },
     started_group: { type: Date, required: true },
     end_group: { type: Date, default: null },
