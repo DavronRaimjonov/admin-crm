@@ -58,9 +58,8 @@ export const get_courses = async (req, res, next) => {
   try {
     const { search, is_freeze } = req.query;
     let filter = {};
-
-    if (is_freeze) {
-      filter.is_freeze = is_freeze;
+    if (is_freeze !== undefined) {
+      filter.is_freeze = is_freeze === "true";
     }
 
     if (search) {
@@ -124,6 +123,19 @@ export const freeze_course = async (req, res, next) => {
     course.is_freeze = true;
     await course.save();
     res.status(200).json({ message: "Kurs vaqtincha to'xtatildi" });
+  } catch (error) {
+    next(error);
+  }
+};
+export const unfreeze_course = async (req, res, next) => {
+  try {
+    const { course_id } = req.body;
+    if (!course_id) throw new CustomError(400, "course_id must be");
+    const course = await Course.findOne({ _id: course_id });
+    if (!course) throw new CustomError(400, "Kurs topilmadi");
+    course.is_freeze = false;
+    await course.save();
+    res.status(200).json({ message: "Kurs qayta ishga tushirildi" });
   } catch (error) {
     next(error);
   }

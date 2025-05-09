@@ -8,6 +8,7 @@ import {
   edit_course,
   freeze_course,
   get_courses,
+  unfreeze_course,
 } from "../../controller/course.controller.js";
 import { createCourseMiddleware } from "../../middleware/validator.middleware.js";
 
@@ -22,6 +23,7 @@ router.post(
 );
 router.post("/edit-course", verifyMenejerMiddleware, edit_course);
 router.put("/freeze-course", verifyMenejerMiddleware, freeze_course);
+router.put("/unfreeze-course", verifyMenejerMiddleware, unfreeze_course);
 router.delete("/delete-course", verifyMenejerMiddleware, delete_course);
 router.get("/get-courses", get_courses);
 export { router };

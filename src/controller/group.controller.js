@@ -1,24 +1,57 @@
+import Category from "../schema/course-cateogry.schema.js";
+import Course from "../schema/course.schema.js";
 import Group from "../schema/group.schema.js";
 import Teacher from "../schema/techer.schema.js";
 import { CustomError, ResData } from "../utils/responseHelpers.js";
 
+export const search_course = async (req, res, next) => {
+  try {
+    const { search } = req.query;
+    let filter = {};
+    if (search) {
+      const categories = await Category.find({
+        name: { $regex: search, $options: "i" },
+      });
+      const categoryIds = categories.map((cat) => cat._id);
+      filter = {
+        name: { $in: categoryIds },
+      };
+    }
+
+    let courses = await Course.find(filter).populate("name");
+    const resData = new ResData(200, "succses", courses);
+    res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};
 export const create_group = async (req, res, next) => {
   try {
     const body = req.body;
-    const isExist = await Group.findOne({
-      name: new RegExp(`^${body.name}$`, "i"),
-    }).lean();
-    if (isExist) {
-      throw new CustomError(400, "Bu nomdagi guruh allaqachon mavjud");
+    if (body.name) {
+      throw new CustomError(
+        400,
+        "Group nomi avtomatik yaratiladi, qo‘lda berib bo‘lmaydi"
+      );
     }
     const teacher = await Teacher.findOne({ _id: body.teacher });
     if (!teacher) {
       throw new CustomError(400, "Ustoz topilmadi");
     }
+    const course = await Course.findOne({ _id: body.course });
+    if (!course) {
+      throw new CustomError(400, "Course topilmadi");
+    }
 
-    let group = await Group.create({ ...body });
+    const groupCount = await Group.countDocuments({ course: body.course });
+
+    const groupName = `${course.name} N${groupCount + 1}`;
+
+    let group = await Group.create({ ...body, name: groupName });
     teacher.groups.push(group._id);
     await teacher.save();
+
+    // Response
     const resData = new ResData(200, "succses", group);
     res.status(resData.status).json(resData);
   } catch (error) {
