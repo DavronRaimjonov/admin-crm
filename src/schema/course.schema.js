@@ -24,6 +24,10 @@ const CourseSchema = new Schema(
       type: Date,
       default: new Date(),
     },
+    is_freeze: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
