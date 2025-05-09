@@ -7,7 +7,7 @@ export const verifyMenejerMiddleware = (req, res, next) => {
       throw new CustomError(403, "Rusxat yo'q");
     }
     if (role !== "manager" && role !== "raxbar") {
-      throw new CustomError(403, "Faqat managerga ruxsat beriladi");
+      throw new CustomError(403, "Faqat manager yoki raxbarga ruxsat beriladi");
     }
 
     next();

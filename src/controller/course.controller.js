@@ -78,16 +78,35 @@ export const get_courses = async (req, res, next) => {
   }
 };
 
+export const edit_course = async (req, res, next) => {
+  try {
+    const { course_id, price, duration } = req.body;
 
-export const edit_course = async (req, res, next)=>{
-    try {
+    if (!course_id || !price || !duration)
+      throw new CustomError(400, "course_id, price, duration must be");
+    const course = await Course.findOne({ _id: course_id });
+    if (!course) throw new CustomError(400, "Kurs topilmadi");
 
-           
+    course.price = price;
+    course.duration = duration;
+    await course.save();
 
+    const resData = new ResData(200, "Kurs o'zgrtrildi", course);
 
-
-        
-    } catch (error) {
-        next(error)
-    }
-}
+    res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};
+export const delete_course = async (req, res, next) => {
+  try {
+    const { course_id } = req.body;
+    if (!course_id) throw new CustomError(400, "course_id must be");
+    let course = await Course.findOne({ _id: course_id });
+    if (!course) throw new CustomError(400, "Kurs topilmadi");
+    await Course.deleteOne({ _id: course_id });
+    res.status(200).json({ message: "Kurs o'chirildi" });
+  } catch (error) {
+    next(error);
+  }
+};
