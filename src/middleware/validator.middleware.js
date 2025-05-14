@@ -7,6 +7,7 @@ import {
 } from "../validator/auth.validator.js";
 import { createCourseValidation } from "../validator/course.validator.js";
 import { createGroupValidation } from "../validator/group.validator.js";
+import { paymentValidation } from "../validator/payment.validator.js";
 import { studentValidation } from "../validator/student.validator.js";
 import { teacherValidation } from "../validator/techer.validator.js";
 
@@ -30,3 +31,4 @@ export const createStudentMiddleware = validateMiddleware(studentValidation);
 export const createCourseMiddleware = validateMiddleware(
   createCourseValidation
 );
+export const createPaymentMiddleware = validateMiddleware(paymentValidation);

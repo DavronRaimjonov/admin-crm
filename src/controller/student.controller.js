@@ -6,7 +6,8 @@ import dayjs from "dayjs";
 export const create_student = async (req, res, next) => {
   try {
     const body = req.body;
-    const lastGroupId = body.groups[body.groups.length - 1].group;
+    const lastGroup = body.groups[body.groups.length - 1].group;
+    const lastGroupId = lastGroup._id || lastGroup;
     const group = await Group.findOne({ _id: lastGroupId });
     if (!group || group.is_deleted) {
       throw new CustomError(
@@ -14,7 +15,10 @@ export const create_student = async (req, res, next) => {
         "Bunday guruh topilmadi yoki guruh yakunlangan"
       );
     }
-    let student = await Student.create({ ...body });
+    let student = await Student.create({
+      ...body,
+      all_price_group: group.price,
+    });
 
     group.students = student._id;
     await group.save();

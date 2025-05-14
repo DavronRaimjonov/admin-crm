@@ -1,42 +1,45 @@
+import dayjs from "dayjs";
 import Student from "../schema/students.schema.js";
 import { CustomError, ResData } from "../utils/responseHelpers.js";
 
-export const show_payment_student = async (req, res, next) => {
+export const get_debtors_student = async (req, res, next) => {
   try {
-    const { student_id } = req.body;
-    if (!student_id) throw new CustomError(400, "student_id must be");
-    const student = await Student.findOne({ _id: student_id }).populate({
-      path: "groups.group",
-    });
+    const { month } = req.query;
 
-    if (!student || !student.groups) {
-      throw new CustomError(404, "Student yoki guruhlar topilmadi");
+    if (!month) {
+      throw new CustomError(
+        400,
+        "month query parametresi majburiy: ?month=2025-05"
+      );
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const create_payment_student = async (req, res, next) => {
+  try {
+    const body = req.body;
+
+    const student = await Student.findOne({ _id: body.student_id });
+    if (!student) {
+      throw new CustomError(400, "Student topilmadi");
     }
 
-    student.all_price_group = student.groups.reduce((acc, value) => {
-      if (value.status === "aktiv" && value.group?.price) {
-        acc += value.group.price;
-      }
-      return acc;
-    }, 0);
+    const monthRegex = /^\d{4}-(0[1-9]|1[0-2])$/;
+    if (!monthRegex.test(body.month)) {
+      throw new CustomError(
+        400,
+        "month noto‘g‘ri formatda. YYYY-MM formatda bo‘lishi kerak (masalan: 2025-05)."
+      );
+    }
+
+    const formattedMonth = dayjs(body.month).format("YYYY-MM");
 
     await student.save();
-    const resData = new ResData(200, "succses", student);
 
-    res.status(resData.status).json(resData);
+    res.status(201).json({ message: "To‘lov muvaffaqiyatli qo‘shildi" });
   } catch (error) {
     next(error);
   }
-};
-
-export const get_debtors_student = () => {
-  try {
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const create_payment_student = () => {
-  try {
-  } catch (error) {}
 };

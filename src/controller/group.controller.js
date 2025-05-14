@@ -95,7 +95,7 @@ export const get_all_group = async (req, res, next) => {
     console.log(filter);
     const groups = await Group.find(filter)
       .populate("teacher")
-      .populate("students");
+      .populate("students")
     const result = search && !groups.length ? [] : groups;
     const resData = new ResData(200, "status", result);
     res.status(resData.status).json(resData);
@@ -179,23 +179,3 @@ export const end_group = async (req, res, next) => {
   }
 };
 
-export const edit_price_group = async (req, res, next) => {
-  try {
-    const { group_id, price } = req.body;
-    if (!group_id || !price)
-      throw new CustomError(400, "group_id yoki price majburiy");
-    const group = await Group.findOne({ _id: group_id });
-    if (!group) throw new CustomError(400, "Guruh topilmadi");
-    if (group.is_deleted || group.disable)
-      throw new CustomError(400, "Guruh yakunlangan");
-
-    group.price = price;
-    await group.save();
-
-    const resData = new ResData(200, "Guruh narxi o'zgartrildi", group);
-
-    res.status(resData.status).json(resData);
-  } catch (error) {
-    next(error);
-  }
-};

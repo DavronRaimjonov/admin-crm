@@ -2,12 +2,13 @@ import { Schema, model } from "mongoose";
 
 const paymentSchema = new Schema(
   {
-    amount: { type: Number, required: true },
+    payment_price: { type: Number, required: true },
     month: { type: String, required: true },
     paidAt: { type: Date, default: Date.now },
     method: {
       type: String,
       enum: ["naqd", "karta"],
+      required: true,
       default: "naqd",
     },
   },
