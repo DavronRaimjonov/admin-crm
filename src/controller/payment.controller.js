@@ -17,6 +17,26 @@ export const get_debtors_student = async (req, res, next) => {
   }
 };
 
+export const search_student = async (req, res, next) => {
+  try {
+    const { name } = req.query;
+
+    if (!name) {
+      return res
+        .status(400)
+        .json({ message: "Iltimos, name query parameterni yuboring." });
+    }
+    const students = await Student.find({
+      first_name: { $regex: name, $options: "i" },
+    });
+
+    const resData = new ResData(200, "sucsess", students);
+    res.status(resData.status).json(resData);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const create_payment_student = async (req, res, next) => {
   try {
     const body = req.body;
