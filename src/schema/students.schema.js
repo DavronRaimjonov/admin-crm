@@ -17,6 +17,10 @@ const paymentSchema = new Schema(
 
 const groupSchema = new Schema(
   {
+    _id: {
+      type: String,
+      default: "",
+    },
     group: { type: Schema.Types.ObjectId, ref: "Group", required: true },
     status: {
       type: String,

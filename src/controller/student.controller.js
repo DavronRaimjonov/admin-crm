@@ -17,6 +17,10 @@ export const create_student = async (req, res, next) => {
     }
     let student = await Student.create({
       ...body,
+      groups: body.groups.map((item) => ({
+        _id: item.group,
+        group: item.group,
+      })),
       all_price_group: group.price,
     });
 
@@ -130,6 +134,7 @@ export const added_new_group_student = async (req, res, next) => {
     }
 
     const newGroup = {
+      _id: group_id,
       group: group_id,
       joinedAt: joinedAt,
       status: "aktiv",
