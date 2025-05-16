@@ -6,4 +6,5 @@ export const cors_links = [
   "https://admin-crm-kappa.vercel.app",
   "https://custom-crm-project.vercel.app",
   "http://localhost:3000",
+  "https://admin-crm-abzakirov.vercel.app",
 ];
